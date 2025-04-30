@@ -1,4 +1,24 @@
 use std::{ fs::File, io::{ Read, Seek, SeekFrom, Write }, path::Path, sync::{ Arc, RwLock } };
+#[macro_export]
+macro_rules! json {
+    ($($key:expr => $value:expr),* $(,)?) => {
+        {
+        let mut s = String::new();
+        s.push('{');
+
+        $(
+            let key = $key;
+            let value = $value;
+            s.push_str(&format!(r#""{}": "{}""#,key, value));
+        )*
+        if s.ends_with(','){
+            s.pop();
+        }
+        s.push('}');
+        s
+        }
+    };
+}
 
 pub struct JacsDb {
     file: Arc<RwLock<File>>,
@@ -25,7 +45,10 @@ impl JacsDb {
     }
 
     fn serializing(content: String) -> Vec<u8> {
-        let content = content.trim();
+        let content: String = content
+            .chars()
+            .filter(|x| !x.is_whitespace())
+            .collect();
         let mut bson_data: Vec<u8> = vec![0xff, 0, 0, 0, 0];
         let byte_key: u8 = 0b10110110;
         let mut content_bytes: Vec<u8> = content.as_bytes().to_vec();

@@ -3,13 +3,6 @@
 version = 4
 
 [[package]]
-name = "jacs_db"
-version = "0.1.0"
-dependencies = [
- "json_driver",
-]
-
-[[package]]
 name = "json_driver"
 version = "0.1.0"
 dependencies = [

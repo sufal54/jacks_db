@@ -1,9 +1,28 @@
-use jacs_db::JacsDb;
+// use jacs_db::{ JacsDb, json };
+use json_driver::Serialize;
+
+#[derive(Serialize, Debug)]
+struct Person {
+    name: String,
+    age: u8,
+    sub: Vec<u8>,
+}
+#[derive(Serialize, Debug)]
+struct Person2 {
+    id: u16,
+    person: Person,
+}
 fn main() {
-    let db = JacsDb::new("data".to_string());
-    db.create_one("Hello World!".to_string());
-    let data = db.read_all();
-    for d in data {
-        println!("{}", d);
-    }
+    let a = Person {
+        name: "mona".to_string(),
+        age: 20,
+        sub: vec![8, 5],
+    };
+
+    // println!("Person1: {}", a.serialize());
+    let b = Person2 {
+        id: 154,
+        person: a,
+    };
+    println!("Person2: {}", b.serialize());
 }
