@@ -35,17 +35,15 @@ pub fn serialize_json_driver(input: TokenStream) -> TokenStream {
 
     let token_stream =
         quote! {
-            // impl std::fmt::Debug for #name {
-            //     fn fmt(&self, f:&mut std::fmt::Formatter)->std::fmt::Result{
-            //         let mut ds = f.debug_struct("");
-
-            //         #(
-            //             ds.field(#values,self.#keys);
-            //         )*
-
-            //         ds.finish
-            //     }
-            // }
+            impl std::fmt::Debug for #name {
+                fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                    let mut ds = f.debug_struct("");
+                    #(
+                        ds.field(&format!("{:?}",stringify!(#keys)), &self.#keys);
+                    )*
+                    ds.finish()
+                }
+            }
 
             impl #name {
                 pub fn serialize(&self) -> String {
@@ -53,7 +51,7 @@ pub fn serialize_json_driver(input: TokenStream) -> TokenStream {
                     json_str.push('{');
                     #(
                         
-                        json_str.push_str(&format!("\"{}\":{:?},",#values,self.#keys));
+                        json_str.push_str(&format!("{}: {:?},",stringify!(#values),&self.#keys));
                     )*
                     if json_str.len() < 3 {
                         json_str.pop();
